@@ -41,7 +41,7 @@ Quality adapts automatically: the ray-marching resolution and step count drop wh
 ## Tests
 
 ```sh
-node --test tests/
+node --test tests/*.test.mjs
 ```
 
 The tests check stable and unstable orbits around the ISCO, plunges, escape classification, and the tidal-disruption verdicts for real black holes.
