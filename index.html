@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Badass Black Hole</title>
+<meta name="description" content="A real-time, ray-traced Schwarzschild black hole you can throw stars, planets, cars and cows into.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Syncopate:wght@400;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="scene" aria-label="Black hole simulation. Drag to throw the selected object."></canvas>
+
+<button id="glass-toggle" class="glass glass-btn" type="button" aria-expanded="false" aria-controls="panel" title="Data and explainers (I)">
+  <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true">
+    <ellipse cx="16" cy="16" rx="13" ry="4.6" fill="none" stroke="currentColor" stroke-width="1.6" transform="rotate(-18 16 16)"/>
+    <circle cx="16" cy="16" r="6.2" fill="currentColor"/>
+    <circle cx="16" cy="16" r="7.6" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.55"/>
+  </svg>
+  <span class="sr-only">Show data and explainers</span>
+</button>
+
+<aside id="panel" class="glass panel" hidden aria-label="Black hole data">
+  <header class="panel-head">
+    <p class="wordmark">Badass<br>Black Hole</p>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-live" aria-selected="true" aria-controls="pane-live" type="button">Live data</button>
+      <button class="tab" role="tab" id="tab-learn" aria-selected="false" aria-controls="pane-learn" type="button">Learn</button>
+      <button class="tab" role="tab" id="tab-controls" aria-selected="false" aria-controls="pane-controls" type="button">Controls</button>
+    </div>
+  </header>
+
+  <section class="pane" id="pane-live" role="tabpanel" aria-labelledby="tab-live">
+    <h2 class="eyebrow">Black hole</h2>
+    <dl class="readout">
+      <div><dt>Mass</dt><dd id="d-mass">–</dd></div>
+      <div><dt>Event horizon radius</dt><dd id="d-rs">–</dd></div>
+      <div><dt>Photon sphere</dt><dd id="d-photon">–</dd></div>
+      <div><dt>Innermost stable orbit</dt><dd id="d-isco">–</dd></div>
+      <div><dt>Shadow diameter</dt><dd id="d-shadow">–</dd></div>
+    </dl>
+
+    <div class="tracked-head">
+      <h2 class="eyebrow">Tracked object</h2>
+      <span class="chip" id="d-status" data-state="none">None</span>
+    </div>
+    <p class="tracked-name" id="d-name">Throw something to track it.</p>
+    <dl class="readout" id="tracked-readout">
+      <div><dt>Distance to horizon</dt><dd id="d-dist">–</dd></div>
+      <div><dt>Speed</dt><dd id="d-speed">–</dd></div>
+      <div><dt>Clock rate vs. Earth</dt><dd id="d-clock">–</dd></div>
+      <div><dt>Redshift z</dt><dd id="d-z">–</dd></div>
+      <div><dt>Tidal stretch across it</dt><dd id="d-tidal">–</dd></div>
+      <div><dt>Torn apart at</dt><dd id="d-rt">–</dd></div>
+    </dl>
+    <div class="meter" aria-hidden="true"><span id="d-meter"></span></div>
+    <p class="meter-label"><span>Horizon</span><span>ISCO</span><span>Far</span></p>
+
+    <h2 class="eyebrow">Scene</h2>
+    <dl class="readout compact">
+      <div><dt>In flight</dt><dd id="d-flight">0</dd></div>
+      <div><dt>Particles</dt><dd id="d-particles">0</dd></div>
+      <div><dt>Swallowed</dt><dd id="d-swallowed">0</dd></div>
+      <div><dt>Render</dt><dd id="d-fps">–</dd></div>
+    </dl>
+  </section>
+
+  <section class="pane" id="pane-learn" role="tabpanel" aria-labelledby="tab-learn" hidden>
+    <article class="card">
+      <h3>Event horizon</h3>
+      <p>At r = 2GM/c², escape would need the speed of light. For this hole that is <b data-live="rs">–</b>. Nothing that crosses it comes back, not even light.</p>
+    </article>
+    <article class="card">
+      <h3>Shadow and photon ring</h3>
+      <p>At 1.5 times the horizon radius, light itself can orbit, but not stably. The dark disc you see is the shadow: about 2.6 times wider than the horizon, because light passing that close gets pulled in. The thin bright line around it is light that looped around the hole before reaching you.</p>
+    </article>
+    <article class="card">
+      <h3>Innermost stable orbit</h3>
+      <p>Closer than 3 horizon radii (6 GM/c²), no circular orbit survives a nudge. The disk ends there and gas spirals straight in. Aim something just inside it and watch it go.</p>
+    </article>
+    <article class="card">
+      <h3>Doppler beaming</h3>
+      <p>The disk gas orbits at up to half the speed of light. The side coming toward you looks bluer and far brighter, and the side moving away looks dim and red. Light from behind the hole is bent over the top and bottom, which is why the disk seems to wrap around the shadow.</p>
+    </article>
+    <article class="card">
+      <h3>Spaghettification</h3>
+      <p>Gravity pulls harder on your near side than your far side. For a 10 solar mass hole this shreds a cow thousands of kilometres out. For Sgr A* a cow crosses the horizon intact, but a star is still torn into a stream of gas. For M87* even stars are swallowed whole.</p>
+    </article>
+    <article class="card">
+      <h3>Redshift and frozen time</h3>
+      <p>Seen from far away, clocks near the horizon slow toward zero and light stretches to the red. Falling objects dim, redden and seem to stall at the edge. For the object itself, nothing special happens at the crossing.</p>
+    </article>
+  </section>
+
+  <section class="pane" id="pane-controls" role="tabpanel" aria-labelledby="tab-controls" hidden>
+    <div class="control">
+      <label for="mass">Mass <output id="mass-out">–</output></label>
+      <input type="range" id="mass" min="0" max="1000" step="1">
+      <div class="presets" id="presets"></div>
+    </div>
+    <div class="control">
+      <label for="time">Time <output id="time-out">1×</output></label>
+      <input type="range" id="time" min="0" max="6" step="1" value="3">
+      <div class="presets">
+        <button type="button" class="pill" id="pause">Pause</button>
+        <button type="button" class="pill" id="clear">Clear all objects</button>
+        <button type="button" class="pill" id="mute" aria-pressed="false">Sound on</button>
+      </div>
+    </div>
+    <div class="keys">
+      <p><kbd>Drag</kbd> throw the selected object</p>
+      <p><kbd>Right-drag</kbd> or two fingers: orbit the camera</p>
+      <p><kbd>Scroll</kbd> or pinch: zoom</p>
+      <p><kbd>1</kbd>–<kbd>8</kbd> pick an object · <kbd>Space</kbd> pause · <kbd>M</kbd> mute · <kbd>C</kbd> clear</p>
+    </div>
+  </section>
+</aside>
+
+<p class="hint" id="hint">Drag anywhere to throw · Right-drag to look around</p>
+<p class="toast" id="toast" role="status" aria-live="polite"></p>
+<nav class="glass dock" id="dock" aria-label="Choose what to throw"></nav>
+
+<div class="fallback" id="fallback" hidden>
+  <p>This simulation needs WebGL 2. Try a recent Chrome, Edge, Firefox or Safari.</p>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.js" } }
+</script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
