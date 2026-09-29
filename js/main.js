@@ -114,6 +114,7 @@ function setMass(ms) {
   state.M = massToSim(ms);
   rig.minDist = 6 * state.M;
   if (rig.tDist < rig.minDist) rig.tDist = rig.minDist;
+  fitCamera();
   for (const b of bodies) b.rt = null;
   ui.setMass(ms);
 }
@@ -368,8 +369,14 @@ function resize() {
   W = window.innerWidth; H = window.innerHeight;
   renderer.setSize(W, H, false);
   camera.aspect = W / H;
+  // Portrait screens get a slightly wider lens so the camera backs off less.
+  camera.fov = camera.aspect < 1 ? Math.min(68, 50 / camera.aspect ** 0.35) : 50;
   camera.updateProjectionMatrix();
+  fitCamera();
   applyQuality();
+}
+function fitCamera(snap = false) {
+  rig.fit(1.12 * diskOuter(), camera, snap);
 }
 function applyQuality() {
   const q = QUALITY[state.quality];
@@ -445,6 +452,7 @@ function frame(now) {
 // ---------- Boot ----------
 resize();
 setMass(state.massSolar);
+fitCamera(true);
 ui.select(state.selected);
 ui.setTime(state.timeScale, false);
 ui.setMuted(false);
@@ -460,5 +468,5 @@ ui.setMuted(false);
 ui.update(telemetry(60));
 
 // Exposed for automated checks.
-window.__bh = { state, bodies, particles, spawn, setMass, THREE, ORDER, TIME_STEPS, renderer };
+window.__bh = { rig, camera, state, bodies, particles, spawn, setMass, THREE, ORDER, TIME_STEPS, renderer };
 requestAnimationFrame(frame);
