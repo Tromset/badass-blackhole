@@ -105,6 +105,8 @@ export function createUI(h) {
   $('pause').addEventListener('click', () => h.onPause());
   $('clear').addEventListener('click', () => h.onClear());
   $('mute').addEventListener('click', () => h.onMute());
+  $('quick-mute').addEventListener('click', () => h.onMute());
+  $('quick-clean').addEventListener('click', () => h.onClear());
 
   // Keyboard
   window.addEventListener('keydown', (e) => {
@@ -138,6 +140,16 @@ export function createUI(h) {
     setMuted(m) {
       $('mute').textContent = m ? 'Sound off' : 'Sound on';
       $('mute').setAttribute('aria-pressed', String(m));
+      const q = $('quick-mute');
+      q.setAttribute('aria-pressed', String(m));
+      q.title = m ? 'Unmute sound (M)' : 'Mute sound (M)';
+      $('quick-mute-label').textContent = m ? 'Unmute' : 'Mute';
+    },
+    cleaned() {
+      const b = $('quick-clean');
+      b.classList.remove('flash');
+      void b.offsetWidth;
+      b.classList.add('flash');
     },
     toast(msg, tone = '') {
       const t = $('toast');

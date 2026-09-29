@@ -298,6 +298,8 @@ const ui = createUI({
     bodies.length = 0;
     state.tracked = null;
     particles.clear();
+    ui.cleaned();
+    ui.toast('Space cleaned');
   },
   onMute() { sound.setMuted(!sound.muted); ui.setMuted(sound.muted); },
 });
